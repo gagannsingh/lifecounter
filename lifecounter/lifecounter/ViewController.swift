@@ -12,7 +12,14 @@ struct Player {
     var lives: Int
 }
 
+struct button {
+    var plus: Int
+    var minus: Int
+}
+
 class ViewController: UIViewController {
+    
+    var userInput: Int = 5
     
     var player1 = Player(name: "Player 1", lives: 20)
     var player2 = Player(name: "Player 2", lives: 20)
@@ -61,12 +68,12 @@ class ViewController: UIViewController {
     }
     
     @IBAction func player1Plus5Tapped(_ sender: UIButton) {
-        player1.lives += 5
+        player1.lives += userInput
         updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
     }
     
     @IBAction func player1Minus5Tapped(_ sender: UIButton) {
-        player1.lives -= 5
+        player1.lives -= userInput
         updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
     }
     
@@ -81,12 +88,12 @@ class ViewController: UIViewController {
     }
     
     @IBAction func player2Plus5Tapped(_ sender: UIButton) {
-        player2.lives += 5
+        player2.lives += userInput
         updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
     }
     
     @IBAction func player2Minus5Tapped(_ sender: UIButton) {
-        player2.lives -= 5
+        player2.lives -= userInput
         updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
     }
     
@@ -106,15 +113,6 @@ class ViewController: UIViewController {
             gameOverLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ])
     }
-    //     Rotation Handling
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        
-        coordinator.animate(alongsideTransition: { _ in
-            // Update UI layout during transition
-            self.updateUILayout(for: size)
-        }, completion: nil)
-    }
     
     @IBOutlet weak var player1ButtonsStackView: UIStackView!
     @IBOutlet weak var player2ButtonsStackView: UIStackView!
@@ -124,4 +122,53 @@ class ViewController: UIViewController {
         player1ButtonsStackView.axis = isPortrait ? .vertical : .horizontal
         player2ButtonsStackView.axis = isPortrait ? .vertical : .horizontal
     }
+    
+    
+    //restart
+    @IBOutlet weak var restartButton: UIButton!
+    @IBAction func restartButton(_ sender: Any) {
+        player1 = Player(name: "Player 1", lives: 20)
+        player2 = Player(name: "Player 2", lives: 20)
+        updateUI()
+    }
+    
+    
+    //custom add button
+    @IBOutlet weak var customerAddButton: UIButton!
+    @IBAction func customAdd(_ sender: Any) {
+        // Create an alert controller
+        let alertController = UIAlertController(title: "Input", message: "Please enter what the custom button should add or |subtract| :", preferredStyle: .alert)
+        
+        // Add a text field to the alert controller
+        alertController.addTextField { (textField) in
+            textField.placeholder = "Enter something"
+        }
+        
+        // Create the action for when the user clicks "OK"
+        let okAction = UIAlertAction(title: "OK", style: .default) { (_) in
+            // Retrieve the text entered by the user and convert it to an integer
+            if let userInputString = alertController.textFields?.first?.text,
+               let userInputInt = Int(userInputString) {
+                // Assign the integer input to the variable
+                self.userInput = userInputInt
+                // Do something with the user input, such as printing it
+                print("User input: \(userInputInt)")
+            }
+        }
+        
+        // Create the action for when the user clicks "Cancel"
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        // Add the actions to the alert controller
+        alertController.addAction(okAction)
+        alertController.addAction(cancelAction)
+        
+        // Present the alert controller
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
 }
+
+
+
+
