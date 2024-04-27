@@ -12,93 +12,328 @@ struct Player {
     var lives: Int
 }
 
-struct button {
-    var plus: Int
-    var minus: Int
-}
-
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
+    var userInput: Int = 5 //initializing input
+    var gameStarted = false //initialize game start
+    var players: [Player] = [
+      Player(name: "Player 1", lives: 20),
+      Player(name: "Player 2", lives: 20),
+      Player(name: "Player 3", lives: 20),
+      Player(name: "Player 4", lives: 20),
+    ]
     
-    var userInput: Int = 5
+    //StackView initialize
+    @IBOutlet weak var overallStackView: UIStackView!
+    @IBOutlet weak var Player1StackView: UIStackView!
+    @IBOutlet weak var player1StackView2: UIStackView!
+    @IBOutlet weak var Player2StackView: UIStackView!
+    @IBOutlet weak var player2StackView2: UIStackView!
+    @IBOutlet weak var Player3StackView: UIStackView!
+    @IBOutlet weak var player3StackView2: UIStackView!
+    @IBOutlet weak var Player4StackView: UIStackView!
+    @IBOutlet weak var player4StackView2: UIStackView!
+    @IBOutlet weak var Player5StackView: UIStackView!
+    @IBOutlet weak var player5StackView2: UIStackView!
+    @IBOutlet weak var Player6StackView: UIStackView!
+    @IBOutlet weak var player6StackView2: UIStackView!
+    @IBOutlet weak var Player7StackView: UIStackView!
+    @IBOutlet weak var player7StackView2: UIStackView!
+    @IBOutlet weak var Player8StackView: UIStackView!
+    @IBOutlet weak var player8StackView2: UIStackView!
     
-    var player1 = Player(name: "Player 1", lives: 20)
-    var player2 = Player(name: "Player 2", lives: 20)
     
+    //players buttons
     @IBOutlet weak var player1NameLabel: UILabel!
     @IBOutlet weak var player1LifeLabel: UILabel!
     @IBOutlet weak var player1Plus1Button: UIButton!
     @IBOutlet weak var player1Minus1Button: UIButton!
-    @IBOutlet weak var player1Plus5Button: UIButton!
-    @IBOutlet weak var player1Minus5Button: UIButton!
+    @IBOutlet weak var player1CustomAddButton: UIButton!
+    @IBOutlet weak var player1CustomMinusButton: UIButton!
     
     @IBOutlet weak var player2NameLabel: UILabel!
     @IBOutlet weak var player2LifeLabel: UILabel!
     @IBOutlet weak var player2Plus1Button: UIButton!
     @IBOutlet weak var player2Minus1Button: UIButton!
-    @IBOutlet weak var player2Plus5Button: UIButton!
-    @IBOutlet weak var player2Minus5Button: UIButton!
+    @IBOutlet weak var player2CustomAddButton: UIButton!
+    @IBOutlet weak var player2CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player3NameLabel: UILabel!
+    @IBOutlet weak var player3LifeLabel: UILabel!
+    @IBOutlet weak var player3Plus1Button: UIButton!
+    @IBOutlet weak var player3Minus1Button: UIButton!
+    @IBOutlet weak var player3CustomAddButton: UIButton!
+    @IBOutlet weak var player3CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player4NameLabel: UILabel!
+    @IBOutlet weak var player4LifeLabel: UILabel!
+    @IBOutlet weak var player4Plus1Button: UIButton!
+    @IBOutlet weak var player4Minus1Button: UIButton!
+    @IBOutlet weak var player4CustomAddButton: UIButton!
+    @IBOutlet weak var player4CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player5NameLabel: UILabel!
+    @IBOutlet weak var player5LifeLabel: UILabel!
+    @IBOutlet weak var player5Plus1Button: UIButton!
+    @IBOutlet weak var player5Minus1Button: UIButton!
+    @IBOutlet weak var player5CustomAddButton: UIButton!
+    @IBOutlet weak var player5CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player6NameLabel: UILabel!
+    @IBOutlet weak var player6LifeLabel: UILabel!
+    @IBOutlet weak var player6Plus1Button: UIButton!
+    @IBOutlet weak var player6Minus1Button: UIButton!
+    @IBOutlet weak var player6CustomAddButton: UIButton!
+    @IBOutlet weak var player6CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player7NameLabel: UILabel!
+    @IBOutlet weak var player7LifeLabel: UILabel!
+    @IBOutlet weak var player7Plus1Button: UIButton!
+    @IBOutlet weak var player7Minus1Button: UIButton!
+    @IBOutlet weak var player7CustomAddButton: UIButton!
+    @IBOutlet weak var player7CustomMinusButton: UIButton!
+    
+    @IBOutlet weak var player8NameLabel: UILabel!
+    @IBOutlet weak var player8LifeLabel: UILabel!
+    @IBOutlet weak var player8Plus1Button: UIButton!
+    @IBOutlet weak var player8Minus1Button: UIButton!
+    @IBOutlet weak var player8CustomAddButton: UIButton!
+    @IBOutlet weak var player8CustomMinusButton: UIButton!
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         updateUI()
-    }
+        Player5StackView.isHidden=true
+        Player6StackView.isHidden=true
+        Player7StackView.isHidden=true
+        Player8StackView.isHidden=true
+      }
+
     
+    //add player function
+    @IBOutlet weak var addPlayer: UIButton!
+    @IBAction func addPlayerButton(_ sender: Any) {
+        guard players.count < 8 && !gameStarted else {
+          // Maximum players reached or game started
+          return
+        }
+        let newPlayer = Player(name: "Player \(players.count + 1)", lives: 20)
+        players.append(newPlayer)
+        updateUI()
+        addPlayer.isEnabled = players.count < 8 && !gameStarted // Disable if game started or at max players
+
+        // Enable buttons for the newly added player and existing players (up to 8)
+        for index in 0..<players.count {
+          enablePlayerButtons(forPlayerAt: index)
+        }
+      }
+    
+    func enablePlayerButtons(forPlayerAt index: Int) {
+        guard index >= 4 && index < players.count else { return } // Only enable for players 4-7
+
+        // Access buttons based on player index (assuming naming convention)
+        switch index {
+        case 4:
+          Player5StackView.isHidden = false
+        case 5:
+          Player6StackView.isHidden = false
+        case 6:
+          Player7StackView.isHidden = false
+        case 7:
+          Player8StackView.isHidden = false
+        default:
+          // Shouldn't happen with the current guard statement
+          print("Error: Unexpected player index for enabling buttons.")
+        }
+      }
+
+
     func updateUI() {
-        player1NameLabel.text = player1.name
-        player1LifeLabel.text = "\(player1.lives)"
-        player2NameLabel.text = player2.name
-        player2LifeLabel.text = "\(player2.lives)"
-    }
+
+        // Update "Add Player" button state
+        addPlayer.isEnabled = players.count < 8 && !gameStarted
+      }
     
     func updatePlayerLifeLabel(player: Player, label: UILabel) {
-        label.text = "\(player.lives)"
-        if player.lives <= 0 {
-            displayGameOverMessage(player: player.name)
-        }
+      label.text = "\(player.lives)"
+      if player.lives <= 0 {
+        displayGameOverMessage(player: player.name)
+        gameStarted = true // Set gameInProgress to true after first life change
+      }
     }
     
+    
+    //player1buttons
     @IBAction func player1Plus1Button(_ sender: UIButton) {
-        player1.lives += 1
-        updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
+        players[0].lives += 1
+        updatePlayerLifeLabel(player: players[0], label: player1LifeLabel)
     }
-    
     @IBAction func player1Minus1Tapped(_ sender: UIButton) {
-        player1.lives -= 1
-        updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
+        players[0].lives -= 1
+        updatePlayerLifeLabel(player: players[0], label: player1LifeLabel)
+    }
+    @IBAction func player1CustomAddTapped(_ sender: UIButton) {
+        players[0].lives += userInput
+        updatePlayerLifeLabel(player: players[0], label: player1LifeLabel)
+    }
+    @IBAction func player1CustomMinusTapped(_ sender: UIButton) {
+        players[0].lives -= userInput
+        updatePlayerLifeLabel(player: players[0], label: player1LifeLabel)
     }
     
-    @IBAction func player1Plus5Tapped(_ sender: UIButton) {
-        player1.lives += userInput
-        updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
-    }
     
-    @IBAction func player1Minus5Tapped(_ sender: UIButton) {
-        player1.lives -= userInput
-        updatePlayerLifeLabel(player: player1, label: player1LifeLabel)
-    }
-    
+    //player2buttons
     @IBAction func player2Plus1Tapped(_ sender: UIButton) {
-        player2.lives += 1
-        updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
+        players[1].lives += 1
+        updatePlayerLifeLabel(player: players[1], label: player2LifeLabel)
     }
-    
     @IBAction func player2Minus1Tapped(_ sender: UIButton) {
-        player2.lives -= 1
-        updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
+        players[1].lives -= 1
+        updatePlayerLifeLabel(player: players[1], label: player2LifeLabel)
+    }
+    @IBAction func player2CustomAddButton(_ sender: UIButton) {
+        players[1].lives += userInput
+        updatePlayerLifeLabel(player: players[1], label: player2LifeLabel)
+    }
+    @IBAction func player2CustomMinusButton(_ sender: UIButton) {
+        players[1].lives -= userInput
+        updatePlayerLifeLabel(player: players[1], label: player2LifeLabel)
     }
     
-    @IBAction func player2Plus5Tapped(_ sender: UIButton) {
-        player2.lives += userInput
-        updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
+    //player3buttons
+    @IBAction func player3Plus1Tapped(_ sender: UIButton) {
+        players[2].lives += 1
+        updatePlayerLifeLabel(player: players[2], label: player3LifeLabel)
+    }
+    @IBAction func player3Minus1Tapped(_ sender: UIButton) {
+        players[2].lives -= 1
+        updatePlayerLifeLabel(player: players[2], label: player3LifeLabel)
+    }
+    @IBAction func player3CustomAddButton(_ sender: UIButton) {
+        players[2].lives += userInput
+        updatePlayerLifeLabel(player: players[2], label: player3LifeLabel)
+    }
+    @IBAction func player3CustomMinusButton(_ sender: UIButton) {
+        players[2].lives -= userInput
+        updatePlayerLifeLabel(player: players[2], label: player3LifeLabel)
     }
     
-    @IBAction func player2Minus5Tapped(_ sender: UIButton) {
-        player2.lives -= userInput
-        updatePlayerLifeLabel(player: player2, label: player2LifeLabel)
+    //player4buttons
+    @IBAction func player4Plus1Tapped(_ sender: UIButton) {
+        players[3].lives += 1
+        updatePlayerLifeLabel(player: players[3], label: player4LifeLabel)
+    }
+    @IBAction func player4Minus1Tapped(_ sender: UIButton) {
+        players[3].lives -= 1
+        updatePlayerLifeLabel(player: players[3], label: player4LifeLabel)
+    }
+    @IBAction func player4CustomAddButton(_ sender: UIButton) {
+        players[3].lives += userInput
+        updatePlayerLifeLabel(player: players[3], label: player4LifeLabel)
+    }
+    @IBAction func player4CustomMinusButton(_ sender: UIButton) {
+        players[3].lives -= userInput
+        updatePlayerLifeLabel(player: players[3], label: player4LifeLabel)
     }
     
+    //player5buttons
+    @IBAction func player5Plus1Tapped(_ sender: UIButton) {
+        players[4].lives += 1
+        updatePlayerLifeLabel(player: players[4], label: player5LifeLabel)
+    }
+    @IBAction func player5Minus1Tapped(_ sender: UIButton) {
+        players[4].lives -= 1
+        updatePlayerLifeLabel(player: players[4], label: player5LifeLabel)
+    }
+    @IBAction func player5CustomAddButton(_ sender: UIButton) {
+        players[4].lives += userInput
+        updatePlayerLifeLabel(player: players[4], label: player5LifeLabel)
+    }
+    @IBAction func player5CustomMinusButton(_ sender: UIButton) {
+        players[4].lives -= userInput
+        updatePlayerLifeLabel(player: players[4], label: player5LifeLabel)
+    }
+    
+    //player6buttons
+    @IBAction func player6Plus1Tapped(_ sender: UIButton) {
+        players[5].lives += 1
+        updatePlayerLifeLabel(player: players[5], label: player6LifeLabel)
+    }
+    @IBAction func player6Minus1Tapped(_ sender: UIButton) {
+        players[5].lives -= 1
+        updatePlayerLifeLabel(player: players[5], label: player6LifeLabel)
+    }
+    @IBAction func player6CustomAddButton(_ sender: UIButton) {
+        players[5].lives += userInput
+        updatePlayerLifeLabel(player: players[5], label: player6LifeLabel)
+    }
+    @IBAction func player6CustomMinusButton(_ sender: UIButton) {
+        players[5].lives -= userInput
+        updatePlayerLifeLabel(player: players[5], label: player6LifeLabel)
+    }
+    
+    //player7buttons
+    @IBAction func player7Plus1Tapped(_ sender: UIButton) {
+        players[6].lives += 1
+        updatePlayerLifeLabel(player: players[6], label: player7LifeLabel)
+    }
+    @IBAction func player7Minus1Tapped(_ sender: UIButton) {
+        players[6].lives -= 1
+        updatePlayerLifeLabel(player: players[6], label: player7LifeLabel)
+    }
+    @IBAction func player7CustomAddButton(_ sender: UIButton) {
+        players[6].lives += userInput
+        updatePlayerLifeLabel(player: players[6], label: player7LifeLabel)
+    }
+    @IBAction func player7CustomMinusButton(_ sender: UIButton) {
+        players[6].lives -= userInput
+        updatePlayerLifeLabel(player: players[6], label: player7LifeLabel)
+    }
+    
+    //player8buttons
+    @IBAction func player8Plus1Tapped(_ sender: UIButton) {
+        players[7].lives += 1
+        updatePlayerLifeLabel(player: players[7], label: player8LifeLabel)
+    }
+    @IBAction func player8Minus1Tapped(_ sender: UIButton) {
+        players[7].lives -= 1
+        updatePlayerLifeLabel(player: players[7], label: player8LifeLabel)
+    }
+    @IBAction func player8CustomAddButton(_ sender: UIButton) {
+        players[7].lives += userInput
+        updatePlayerLifeLabel(player: players[7], label: player8LifeLabel)
+    }
+    @IBAction func player8CustomMinusButton(_ sender: UIButton) {
+        players[7].lives -= userInput
+        updatePlayerLifeLabel(player: players[7], label: player8LifeLabel)
+    }
+    
+    //restart
+    @IBOutlet weak var restartButton: UIButton!
+    @IBAction func restartButton(_ sender: Any) {
+        for index in 0..<(players.count-1) {
+            players[index] = Player(name: "Player \(index+1)", lives: 20)
+        }
+
+        Player5StackView.isHidden = true
+        Player6StackView.isHidden = true
+        Player7StackView.isHidden = true
+        Player8StackView.isHidden = true
+        
+        gameStarted = false
+        updateUI()
+      }
+
+    
+    //history
+    @IBOutlet weak var historyButton: UIButton!
+    @IBAction func historyButton(_ sender: Any) {
+    }
+    
+    
+
     //display when game over
-    
     func displayGameOverMessage(player: String) {
         let gameOverLabel = UILabel()
         gameOverLabel.text = "\(player) LOSES!"
@@ -114,23 +349,6 @@ class ViewController: UIViewController {
         ])
     }
     
-    @IBOutlet weak var player1ButtonsStackView: UIStackView!
-    @IBOutlet weak var player2ButtonsStackView: UIStackView!
-    
-    func updateUILayout(for size: CGSize) {
-        let isPortrait = size.height > size.width
-        player1ButtonsStackView.axis = isPortrait ? .vertical : .horizontal
-        player2ButtonsStackView.axis = isPortrait ? .vertical : .horizontal
-    }
-    
-    
-    //restart
-    @IBOutlet weak var restartButton: UIButton!
-    @IBAction func restartButton(_ sender: Any) {
-        player1 = Player(name: "Player 1", lives: 20)
-        player2 = Player(name: "Player 2", lives: 20)
-        updateUI()
-    }
     
     
     //custom add button
@@ -146,14 +364,10 @@ class ViewController: UIViewController {
         
         // Create the action for when the user clicks "OK"
         let okAction = UIAlertAction(title: "OK", style: .default) { (_) in
-            // Retrieve the text entered by the user and convert it to an integer
-            if let userInputString = alertController.textFields?.first?.text,
-               let userInputInt = Int(userInputString) {
-                // Assign the integer input to the variable
-                self.userInput = userInputInt
-                // Do something with the user input, such as printing it
-                print("User input: \(userInputInt)")
-            }
+          if let userInputString = alertController.textFields?.first?.text,
+             let userInputInt = Int(userInputString) {
+            self.userInput = userInputInt
+          }
         }
         
         // Create the action for when the user clicks "Cancel"
@@ -166,7 +380,6 @@ class ViewController: UIViewController {
         // Present the alert controller
         self.present(alertController, animated: true, completion: nil)
     }
-    
 }
 
 
