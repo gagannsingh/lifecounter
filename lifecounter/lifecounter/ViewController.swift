@@ -16,10 +16,10 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var userInput: Int = 5 //initializing input
     var gameStarted = false //initialize game start
     var players: [Player] = [
-      Player(name: "Player 1", lives: 20),
-      Player(name: "Player 2", lives: 20),
-      Player(name: "Player 3", lives: 20),
-      Player(name: "Player 4", lives: 20),
+        Player(name: "Player 1", lives: 20),
+        Player(name: "Player 2", lives: 20),
+        Player(name: "Player 3", lives: 20),
+        Player(name: "Player 4", lives: 20),
     ]
     
     //StackView initialize
@@ -108,59 +108,55 @@ class ViewController: UIViewController, UITextFieldDelegate {
         Player6StackView.isHidden=true
         Player7StackView.isHidden=true
         Player8StackView.isHidden=true
-      }
-
+    }
+    
     
     //add player function
     @IBOutlet weak var addPlayer: UIButton!
     @IBAction func addPlayerButton(_ sender: Any) {
-        guard players.count < 8 && !gameStarted else {
-          // Maximum players reached or game started
-          return
+        guard players.count < 8 && (gameStarted == false) else {
+            // Maximum players reached or game started
+            return
         }
         let newPlayer = Player(name: "Player \(players.count + 1)", lives: 20)
         players.append(newPlayer)
         updateUI()
-        addPlayer.isEnabled = players.count < 8 && !gameStarted // Disable if game started or at max players
-
-        // Enable buttons for the newly added player and existing players (up to 8)
-        for index in 0..<players.count {
-          enablePlayerButtons(forPlayerAt: index)
-        }
-      }
+        addPlayer.isEnabled = true
+        enablePlayerButtons(forPlayerAt: players.count - 1)
+    }
     
     func enablePlayerButtons(forPlayerAt index: Int) {
-        guard index >= 4 && index < players.count else { return } // Only enable for players 4-7
-
-        // Access buttons based on player index (assuming naming convention)
+        guard index >= 4 && index < players.count else { return }
         switch index {
         case 4:
-          Player5StackView.isHidden = false
+            Player5StackView.isHidden = false
         case 5:
-          Player6StackView.isHidden = false
+            Player6StackView.isHidden = false
         case 6:
-          Player7StackView.isHidden = false
+            Player7StackView.isHidden = false
         case 7:
-          Player8StackView.isHidden = false
+            Player8StackView.isHidden = false
         default:
-          // Shouldn't happen with the current guard statement
-          print("Error: Unexpected player index for enabling buttons.")
+            // Shouldn't happen with the current guard statement
+            print("Error: Unexpected player index for enabling buttons.")
         }
-      }
-
-
-    func updateUI() {
-
-        // Update "Add Player" button state
-        addPlayer.isEnabled = players.count < 8 && !gameStarted
+    }
+    
+    
+    func updateUI(forPlayerAt playerIndex: Int? = nil) {
+        if playerIndex == nil {
+            addPlayer.isEnabled = true
+        } else {
+          enablePlayerButtons(forPlayerAt: playerIndex!)
+        }
       }
     
     func updatePlayerLifeLabel(player: Player, label: UILabel) {
-      label.text = "\(player.lives)"
-      if player.lives <= 0 {
-        displayGameOverMessage(player: player.name)
-        gameStarted = true // Set gameInProgress to true after first life change
-      }
+        label.text = "\(player.lives)"
+        if player.lives <= 0 {
+            displayGameOverMessage(player: player.name)
+            gameStarted = true // Set gameInProgress to true after first life change
+        }
     }
     
     
@@ -309,22 +305,39 @@ class ViewController: UIViewController, UITextFieldDelegate {
         updatePlayerLifeLabel(player: players[7], label: player8LifeLabel)
     }
     
+    func getLifeLabel(forPlayer player: Player) -> UILabel {
+        let index = players.firstIndex(where: { $0.name == player.name })! // Find player index
+        let labelName = "player\(index + 1)LifeLabel" // Construct label name
+        return value(forKey: labelName) as! UILabel // Access label using key-value coding
+    }
+    
     //restart
     @IBOutlet weak var restartButton: UIButton!
     @IBAction func restartButton(_ sender: Any) {
-        for index in 0..<(players.count-1) {
-            players[index] = Player(name: "Player \(index+1)", lives: 20)
-        }
+        gameStarted = false
+        players = [Player(name: "Player 1", lives: 20),
+                   Player(name: "Player 2", lives: 20),
+                   Player(name: "Player 3", lives: 20),
+                   Player(name: "Player 4", lives: 20)]
 
+        // Hide Extra Player UI Elements Initially
         Player5StackView.isHidden = true
         Player6StackView.isHidden = true
         Player7StackView.isHidden = true
         Player8StackView.isHidden = true
-        
-        gameStarted = false
-        updateUI()
-      }
 
+        // Reset Other Variables
+        addPlayer.isEnabled = true
+        updateUI()
+
+        // Loop through existing players (up to players.count)
+        for index in 0..<players.count {
+          let player = players[index]
+
+          let lifeLabel = self.value(forKey: "player\(index + 1)LifeLabel") as! UILabel
+          updatePlayerLifeLabel(player: player, label: lifeLabel)
+        }
+      }
     
     //history
     @IBOutlet weak var historyButton: UIButton!
