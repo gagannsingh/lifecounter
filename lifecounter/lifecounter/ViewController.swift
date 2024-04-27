@@ -14,7 +14,7 @@ struct Player {
 
 class ViewController: UIViewController, UITextFieldDelegate {
     var userInput: Int = 5 //initializing input
-    var gameStarted = false //initialize game start
+    var gameStarted = false // initialize game start
     var players: [Player] = [
         Player(name: "Player 1", lives: 20),
         Player(name: "Player 2", lives: 20),
@@ -108,8 +108,41 @@ class ViewController: UIViewController, UITextFieldDelegate {
         Player6StackView.isHidden=true
         Player7StackView.isHidden=true
         Player8StackView.isHidden=true
+        
+        observePlayerScoreChange(forLabel: player1LifeLabel)
+        observePlayerScoreChange(forLabel: player2LifeLabel)
+        observePlayerScoreChange(forLabel: player3LifeLabel)
+        observePlayerScoreChange(forLabel: player4LifeLabel)
+        observePlayerScoreChange(forLabel: player5LifeLabel)
+        observePlayerScoreChange(forLabel: player6LifeLabel)
+        observePlayerScoreChange(forLabel: player7LifeLabel)
+        observePlayerScoreChange(forLabel: player8LifeLabel)
     }
-    
+
+       // Function to observe player's score change
+       func observePlayerScoreChange(forLabel label: UILabel) {
+           label.addObserver(self, forKeyPath: "text", options: .new, context: nil)
+       }
+
+       // Observer method to detect changes in player's score label
+       override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+           if let label = object as? UILabel, label == player1LifeLabel || label == player2LifeLabel || label == player3LifeLabel || label == player4LifeLabel || label == player5LifeLabel || label == player6LifeLabel || label == player7LifeLabel || label == player8LifeLabel {
+               // Disable the "Add Player" button
+               addPlayer.isEnabled = false
+           }
+       }
+
+
+       deinit {
+           player1LifeLabel.removeObserver(self, forKeyPath: "text")
+           player2LifeLabel.removeObserver(self, forKeyPath: "text")
+           player3LifeLabel.removeObserver(self, forKeyPath: "text")
+           player4LifeLabel.removeObserver(self, forKeyPath: "text")
+           player5LifeLabel.removeObserver(self, forKeyPath: "text")
+           player6LifeLabel.removeObserver(self, forKeyPath: "text")
+           player7LifeLabel.removeObserver(self, forKeyPath: "text")
+           player8LifeLabel.removeObserver(self, forKeyPath: "text")
+       }
     
     //add player function
     @IBOutlet weak var addPlayer: UIButton!
@@ -145,7 +178,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     func updateUI(forPlayerAt playerIndex: Int? = nil) {
         if playerIndex == nil {
-            addPlayer.isEnabled = true
+          addPlayer.isEnabled = !gameStarted // Enable only if game not started
         } else {
           enablePlayerButtons(forPlayerAt: playerIndex!)
         }
@@ -154,10 +187,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
     func updatePlayerLifeLabel(player: Player, label: UILabel) {
         label.text = "\(player.lives)"
         if player.lives <= 0 {
-            displayGameOverMessage(player: player.name)
-            gameStarted = true // Set gameInProgress to true after first life change
+          displayGameOverMessage(player: player.name)
+          // Set gameStarted to true only once on first life change
+          if !gameStarted {
+            gameStarted = true
+          }
         }
-    }
+      }
     
     
     //player1buttons
